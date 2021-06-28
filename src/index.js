@@ -65,7 +65,7 @@ class Influxdb {
             .map((value, index) => {
               const key = header[index];
 
-              if (key === '_value') {
+              if (key === '_value' && !isNaN(value)) {
                 value = parseFloat(value);
               }
               else if (key === '_start' || key === '_stop' || key === '_time') {
