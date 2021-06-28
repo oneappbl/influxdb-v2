@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const fetch = require('node-fetch');
+const parseBool = (value, defaultValue) => ['true', 'false', true, false].includes(value) && JSON.parse(value) || defaultValue
 
 class Influxdb {
   constructor({ host, protocol, port, token, fetchOptions = {} }) {
@@ -68,10 +69,12 @@ class Influxdb {
 
               if (key === '_value' && !isNaN(value)) {
                 value = parseFloat(value);
-              } else if (key === '_value' && _.isBoolean(value)) {
-              value =  Boolean(value).valueOf();
-              }
-              else if (key === '_start' || key === '_stop' || key === '_time') {
+              } else if (key === '_value') {
+                  const parsedBoolValue = parseBool(value, undefined);
+                  if (parsedBoolValue) {
+                      value =  parsedBoolValue;
+                  }
+              } else if (key === '_start' || key === '_stop' || key === '_time') {
                 value = new Date(value);
               }
 
