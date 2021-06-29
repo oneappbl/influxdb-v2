@@ -82,7 +82,7 @@ class Influxdb {
                 value = parseFloat(value);
               } else if (key === '_value') {
                   const parsedBoolValue = extrictParseBool(value, undefined);
-                  if (parsedBoolValue) {
+                  if (parsedBoolValue !== undefined) {
                       value =  parsedBoolValue;
                   }
               } else if (key === '_start' || key === '_stop' || key === '_time') {
