@@ -1,6 +1,17 @@
 const _ = require('lodash');
 const fetch = require('node-fetch');
-const parseBool = (value, defaultValue) => ['true', 'false', true, false].includes(value) && JSON.parse(value) || defaultValue
+const extrictParseBool = (value, defaultValue = undefined) => {
+    if (value && _.isBoolean()) {
+        return value;
+    } else if (value && _.isNumber(value)) {
+        return defaultValue;
+    } else if (value && typeof value === 'string' && ['true', 'yes', 't', 'y'].includes(value.toLowerCase())) {
+        return true;
+    } else if (value && typeof value === 'string' && ['false', 'no', 't', 'y'].includes(value.toLowerCase())) {
+        return false;
+    }
+    return defaultValue;
+};
 
 class Influxdb {
   constructor({ host, protocol, port, token, fetchOptions = {} }) {
@@ -70,7 +81,7 @@ class Influxdb {
               if (key === '_value' && !isNaN(value)) {
                 value = parseFloat(value);
               } else if (key === '_value') {
-                  const parsedBoolValue = parseBool(value, undefined);
+                  const parsedBoolValue = extrictParseBool(value, undefined);
                   if (parsedBoolValue) {
                       value =  parsedBoolValue;
                   }
@@ -133,4 +144,7 @@ class Influxdb {
 };
 
 
-module.exports = Influxdb;
+module.exports = {
+    Influxdb,
+    extrictParseBool
+};
